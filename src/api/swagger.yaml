@@ -1,0 +1,99 @@
+---
+swagger: "2.0"
+info:
+  description: "Servicio encargado de la gestión centralizada de notificaciones del\
+    \ sistema.  \nSu objetivo es garantizar que los usuarios reciban información relevante\
+    \ de manera segura, \nmanteniendo la separación de responsabilidades y la integridad\
+    \ de los canales de comunicación.  \nTodas las operaciones requieren autenticació\
+    n mediante **Bearer JWT**, **API Key**, o un **rol de administrador**.\n"
+  version: "1.0.0"
+  title: "Microservicio de Notificaciones"
+tags:
+- name: "notification"
+  description: "Operaciones relacionadas con la gestión de notificaciones."
+security:
+- bearerAuth: []
+- apiKeyAuth: []
+- adminRole: []
+paths:
+  /:
+    get:
+      tags:
+      - "notification"
+      summary: "Listar todas las notificaciones"
+      operationId: "rootGET"
+      parameters: []
+      security:
+      - bearerAuth: []
+      responses:
+        "200":
+          description: "Lista de notificaciones existentes."
+        "401":
+          description: "No autorizado."
+      x-swagger-router-controller: "Notification"
+  /{notificationId}:
+    get:
+      tags:
+      - "notification"
+      summary: "Obtener una notificación por ID"
+      operationId: "notificationIdGET"
+      parameters:
+      - name: "notificationId"
+        in: "path"
+        description: "Identificador de la notificación."
+        required: true
+      responses:
+        "200":
+          description: "Notificación encontrada."
+        "404":
+          description: "No se encontró la notificación."
+      x-swagger-router-controller: "Notification"
+    put:
+      tags:
+      - "notifications"
+      summary: "Actualizar una notificación existente"
+      operationId: "notificationIdPUT"
+      parameters:
+      - name: "notificationId"
+        in: "path"
+        description: "Identificador de la notificación."
+        required: true
+      responses:
+        "200":
+          description: "Notificación actualizada correctamente."
+        "404":
+          description: "No se encontró la notificación a actualizar."
+      x-swagger-router-controller: "Notifications"
+    delete:
+      tags:
+      - "notifications"
+      summary: "Eliminar una notificación"
+      operationId: "notificationIdDELETE"
+      parameters:
+      - name: "notificationId"
+        in: "path"
+        description: "Identificador de la notificación."
+        required: true
+      responses:
+        "204":
+          description: "Notificación eliminada correctamente."
+        "404":
+          description: "No se encontró la notificación a eliminar."
+      x-swagger-router-controller: "Notifications"
+  /create:
+    post:
+      tags:
+      - "notifications"
+      summary: "Crear una nueva notificación"
+      description: "Crea una nueva notificación para un usuario específico."
+      operationId: "createPOST"
+      parameters: []
+      security:
+      - bearerAuth: []
+      responses:
+        "201":
+          description: "Notificación creada exitosamente."
+        "400":
+          description: "Datos inválidos en la solicitud."
+      x-swagger-router-controller: "Notifications"
+definitions: {}

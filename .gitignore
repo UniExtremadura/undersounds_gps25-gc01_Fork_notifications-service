@@ -22,3 +22,17 @@ lerna-debug.log*
 # temp directory
 .temp
 .tmp
+
+/generated/prisma
+
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+
+# Docker
+*.pid
