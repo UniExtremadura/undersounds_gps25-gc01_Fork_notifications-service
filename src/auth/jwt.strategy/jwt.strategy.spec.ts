@@ -1,10 +1,27 @@
+import { Test } from '@nestjs/testing';
 import { JwtStrategy } from './jwt.strategy';
+import { ConfigService } from '@nestjs/config';
+import { UnauthorizedException } from '@nestjs/common';
 
 describe('JwtStrategy', () => {
     let jwtStrategy: JwtStrategy;
+    let configService: ConfigService;
 
-    beforeEach(() => {
-        jwtStrategy = new JwtStrategy();
+    beforeEach(async () => {
+        const moduleRef = await Test.createTestingModule({
+            providers: [
+                JwtStrategy,
+                {
+                    provide: ConfigService,
+                    useValue: {
+                        get: jest.fn().mockReturnValue('test-secret-key'),
+                    },
+                },
+            ],
+        }).compile();
+
+        jwtStrategy = moduleRef.get<JwtStrategy>(JwtStrategy);
+        configService = moduleRef.get<ConfigService>(ConfigService);
     });
 
     it('should be defined', () => {
@@ -14,28 +31,67 @@ describe('JwtStrategy', () => {
     it('should validate payload correctly', async () => {
         const payload = {
             sub: '12345',
-            username: 'testuser',
-            realm_access: { roles: ['internal-service'] },
+            preferred_username: 'testuser',
+            email: 'test@example.com',
+            realm_access: { roles: ['admin', 'user'] },
         };
 
         const user = await jwtStrategy.validate(payload);
 
         expect(user).toEqual({
-            sub: '12345',
+            userId: '12345',
             username: 'testuser',
-            roles: ['internal-service'],
+            email: 'test@example.com',
+            roles: ['admin', 'user'],
         });
     });
 
     it('should handle payload with no roles', async () => {
-        const payload = { sub: '12345', username: 'testuser' };
+        const payload = {
+            sub: '12345',
+            preferred_username: 'testuser',
+            email: 'test@example.com',
+        };
 
         const user = await jwtStrategy.validate(payload);
 
         expect(user).toEqual({
-            sub: '12345',
+            userId: '12345',
             username: 'testuser',
+            email: 'test@example.com',
             roles: [],
         });
+    });
+
+    it('should throw UnauthorizedException when payload is missing sub', async () => {
+        const payload = {
+            preferred_username: 'testuser',
+            email: 'test@example.com',
+        };
+
+        await expect(jwtStrategy.validate(payload as any)).rejects.toThrow(
+            UnauthorizedException,
+        );
+    });
+
+    it('should throw UnauthorizedException when payload is missing email', async () => {
+        const payload = {
+            sub: '12345',
+            preferred_username: 'testuser',
+        };
+
+        await expect(jwtStrategy.validate(payload as any)).rejects.toThrow(
+            UnauthorizedException,
+        );
+    });
+
+    it('should use fallback secret when JWT_SECRET is not provided', async () => {
+        // Mock ConfigService para retornar null
+        jest.spyOn(configService, 'get').mockReturnValue(null);
+
+        // Recrear JwtStrategy con el mock
+        const strategyWithFallback = new JwtStrategy(configService);
+
+        expect(strategyWithFallback).toBeDefined();
     });
 });

@@ -4,13 +4,13 @@ import { IsString, IsNotEmpty } from 'class-validator';
 export class CreateNotificationDto {
     @IsString()
     @IsNotEmpty()
-    message: string;
+    message: string = '';
 
     @IsString()
     @IsNotEmpty()
-    channel: string;
+    channel: string = '';
 
     @IsString()
     @IsNotEmpty()
-    userId: string;
+    userId: string = '';
 }

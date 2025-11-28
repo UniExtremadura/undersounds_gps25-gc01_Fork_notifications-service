@@ -10,7 +10,7 @@ import { RolesGuard } from '../auth/roles/roles.guard';
 import { RequireRole } from '../auth/roles/role.decorator';
 
 @Controller('notifications')
-@UseGuards(JwtAuthGuard, RolesGuard)     // Todos los endpoints requieren autenticación
+@UseGuards(JwtAuthGuard) //RolesGuard)     // Todos los endpoints requieren autenticación
 export class NotificationsController {
     constructor(private readonly notificationsService: NotificationsService) {}
 
@@ -36,13 +36,13 @@ export class NotificationsController {
         return this.notificationsService.findOne(id);
     }
 
-    @Put(':id')
+    @Put('user/:userId')
     @RequireRole('internal-service')
     update(@Param('id') id: string, @Body() updateNotificationDto: UpdateNotificationDto) {
         return this.notificationsService.update(id, updateNotificationDto);
     }
 
-    @Delete(':id')
+    @Delete('user/:userId')
     @RequireRole('internal-service')
     remove(@Param('id') id: string) {
         return this.notificationsService.remove(id);
@@ -62,5 +62,13 @@ export class NotificationsController {
     @RequireRole('artist')
     findUnread(@Param('userId') userId: string) {
         return this.notificationsService.findUnreadByUser(userId);
+    }
+    @Get('test')
+    @UseGuards(JwtAuthGuard) // Solo JWT, sin RolesGuard
+    testAuth() {
+        return {
+            message: '✅ Authentication works!',
+            timestamp: new Date().toISOString()
+        };
     }
 }

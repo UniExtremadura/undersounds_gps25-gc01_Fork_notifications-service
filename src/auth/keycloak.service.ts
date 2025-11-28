@@ -31,7 +31,13 @@ export class KeycloakService {
             const { data } = await axios.post(url, params);
             return data.access_token;
         } catch (err) {
-            console.error('Error fetching Keycloak token:', err.response?.data || err.message);
+            if (err instanceof Error) {
+                // err es un Error estándar de JS
+                console.error('Error fetching Keycloak token:', err.message);
+            } else {
+                // err puede ser cualquier cosa (objeto, string, etc.)
+                console.error('Error fetching Keycloak token:', err);
+            }
             throw new Error('Failed to obtain Keycloak service token');
         }
     }

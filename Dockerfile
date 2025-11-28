@@ -1,27 +1,38 @@
-# Imagen para desarrollo con hot-reload
-FROM node:20-alpine
+# -------------------------
+# Etapa 1: Build
+# -------------------------
+FROM node:20-alpine AS builder
 
-# Crear directorio de trabajo
 WORKDIR /app
 
-# Copiar package.json y package-lock.json
 COPY package*.json ./
-
-# Instalar dependencias
 RUN npm install
 
-# Copiar todo el código fuente
-COPY . .
-
-# Generar cliente de Prisma
+COPY prisma ./prisma/
 RUN npx prisma generate
 
-# Variables de entorno para DESARROLLO
-ENV NODE_ENV=development
+COPY . .
+RUN npm run build
+
+# -------------------------
+# Etapa 2: Producción
+# -------------------------
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install --only=production
+
+# ✅ COPIAR node_modules/.prisma COMPLETO
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/prisma ./prisma
+
+ENV NODE_ENV=production
 ENV PORT=3000
 
-# Exponer el puerto
 EXPOSE 3000
 
-# Comando para desarrollo con hot-reload
-CMD ["npm", "run", "dev"]
+CMD ["node", "dist/main.js"]

@@ -1,0 +1,66 @@
+{
+  "realm": "undersounds",
+  "enabled": true,
+  "roles": {
+    "realm": [
+      {
+        "name": "artist",
+        "description": "Artists can manage their music and notifications"
+      },
+      {
+        "name": "internal-service",
+        "description": "Internal microservices for system operations"
+      },
+      {
+        "name": "user",
+        "description": "Regular platform user"
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "notifications-service",
+      "enabled": true,
+      "secret": "notifications-secret-123",
+      "redirectUris": ["http://localhost:3000/*"],
+      "webOrigins": ["http://localhost:3000"],
+      "directAccessGrantsEnabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false
+    }
+  ],
+  "users": [
+    {
+      "username": "test-user",
+      "enabled": true,
+      "email": "undersoundsnotifications@gmail.com",
+      "firstName": "Test",
+      "lastName": "User",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "test123"
+        }
+      ],
+      "realmRoles": [
+        "artist",
+        "user"
+      ]
+    },
+    {
+      "username": "internal-service",
+      "enabled": true,
+      "firstName": "Internal",
+      "lastName": "Service",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "internal-secret-123"
+        }
+      ],
+      "realmRoles": [
+        "internal-service"
+      ]
+    }
+  ]
+}
