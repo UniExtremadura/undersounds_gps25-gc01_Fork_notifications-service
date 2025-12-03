@@ -19,31 +19,31 @@ export class NotificationsController {
     // -----------------------
     // Solo accesible para otros microservicios
     @Post()
-    @RequireRole('internal-service')
+  //  @RequireRole('internal-service')
     create(@Body() createNotificationDto: CreateNotificationDto) {
         return this.notificationsService.create(createNotificationDto);
     }
 
     @Get()
-    @RequireRole('internal-service')
+    //@RequireRole('internal-service')
     findAll() {
         return this.notificationsService.findAll();
     }
 
     @Get(':id')
-    @RequireRole('internal-service')
+   // @RequireRole('internal-service')
     findOne(@Param('id') id: string) {
         return this.notificationsService.findOne(id);
     }
 
     @Put('user/:userId')
-    @RequireRole('internal-service')
+    //@RequireRole('internal-service')
     update(@Param('id') id: string, @Body() updateNotificationDto: UpdateNotificationDto) {
         return this.notificationsService.update(id, updateNotificationDto);
     }
 
     @Delete('user/:userId')
-    @RequireRole('internal-service')
+    //@RequireRole('internal-service')
     remove(@Param('id') id: string) {
         return this.notificationsService.remove(id);
     }
@@ -59,7 +59,7 @@ export class NotificationsController {
     }
 
     @Get('user/:userId/unread')
-    @RequireRole('artist')
+    //@RequireRole('artist')
     findUnread(@Param('userId') userId: string) {
         return this.notificationsService.findUnreadByUser(userId);
     }
