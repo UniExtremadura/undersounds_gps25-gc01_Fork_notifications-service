@@ -24,13 +24,9 @@ var writeJson = exports.writeJson = function(response, arg1, arg2) {
       code = arg1;
     }
   }
-  if(code && arg1) {
+  if(code && arg1 || arg1) {
     payload = arg1;
   }
-  else if(arg1) {
-    payload = arg1;
-  }
-
   if(!code) {
     // if no response code given, we default to 200
     code = 200;
